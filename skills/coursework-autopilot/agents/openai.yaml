@@ -1,0 +1,11 @@
+interface:
+  display_name: "Coursework Autopilot"
+  short_description: "Turn coursework archives into code and formal reports"
+  default_prompt: "Use $coursework-autopilot to turn this coursework archive or extracted requirements into a confirmed plan, working code, and a submission-ready report."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "coursework-autopilot"
+      description: "Custom MCP server exposing extract_course_requirements and inspect_course_workspace"
+policy:
+  allow_implicit_invocation: true

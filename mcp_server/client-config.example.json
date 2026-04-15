@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "coursework-autopilot": {
+      "command": "python",
+      "args": [
+        "-m",
+        "mcp_server"
+      ],
+      "cwd": "/Users/wanghan/Projects/course_work"
+    }
+  }
+}
