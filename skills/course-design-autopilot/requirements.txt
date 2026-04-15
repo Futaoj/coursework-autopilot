@@ -1,2 +1,11 @@
-PyPDF2
+# Document parsing
+mineru[full]
+langdetect
+
+# Diagram generation
+plantuml
+
+# Report generation
 python-docx
+docx2pdf
+reportlab
