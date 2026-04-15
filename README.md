@@ -7,7 +7,7 @@
 ![MCP Tools](https://img.shields.io/badge/MCP_tools-2-informational)
 ![Helper Scripts](https://img.shields.io/badge/helper_scripts-3-informational)
 
-`coursework-autopilot` 是一个面向课程设计/课程作业场景的 Codex Skill 与本地 MCP 工具链。它可以把老师下发的 `.zip`、混合 PDF/DOCX/TXT 材料或已有 `COURSE_REQUIREMENTS.md` 规范化成需求文件，在确认环节后继续推进实现、验证和正式报告撰写。
+`coursework-autopilot` 是一个面向课程设计/课程作业场景的 Skill 与本地 MCP 工具链。它可以把老师下发的 `.zip`、混合 PDF/DOCX/TXT 材料或已有 `COURSE_REQUIREMENTS.md` 规范化成需求文件，在确认环节后继续推进实现、验证和正式报告撰写。
 
 仓库里同时提供两套内容：
 - 开发版 skill：`skills/coursework-autopilot`
@@ -77,6 +77,85 @@ python skills/coursework-autopilot/scripts/extract_course_requirements.py <archi
 python skills/coursework-autopilot/scripts/inspect_course_workspace.py <workspace>
 python skills/coursework-autopilot/scripts/init_report_from_template.py <output.md>
 ```
+
+## 平台接入
+
+### Codex
+
+- Skill 开发目录：`skills/coursework-autopilot`
+- Skill 发布目录：`publish/coursework-autopilot`
+- 本地 MCP server 启动命令：
+
+```bash
+python -m mcp_server
+```
+
+如果你的 Codex 环境支持项目级 MCP 配置，直接复用 `mcp_server/client-config.example.json` 里的结构即可。
+
+### Claude Code
+
+Claude Code 官方文档支持项目级 MCP 配置，项目范围的服务可以写进仓库根目录 `.mcp.json`，也可以用命令行添加。
+
+示例做法 1：直接用命令添加本地 server。
+
+```bash
+claude mcp add coursework-autopilot --scope project -- python -m mcp_server
+```
+
+示例做法 2：手动在仓库根目录创建 `.mcp.json`。
+
+```json
+{
+  "mcpServers": {
+    "coursework-autopilot": {
+      "command": "python",
+      "args": ["-m", "mcp_server"],
+      "env": {}
+    }
+  }
+}
+```
+
+如果你不想接 MCP，也可以在 Claude Code 里直接运行仓库内脚本：
+
+```bash
+python skills/coursework-autopilot/scripts/extract_course_requirements.py <archive.zip> <workspace>
+```
+
+### OpenCode
+
+OpenCode 支持在 `opencode.json` 或 `opencode.jsonc` 中通过 `mcp` 字段配置本地 MCP server。
+
+示例配置：
+
+```jsonc
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "coursework-autopilot": {
+      "type": "local",
+      "command": ["python", "-m", "mcp_server"],
+      "enabled": true
+    }
+  }
+}
+```
+
+配置完成后可以用这些命令确认状态：
+
+```bash
+opencode mcp list
+opencode run "Use coursework-autopilot to inspect this coursework workspace"
+```
+
+### 其他平台
+
+只要运行环境支持本地 MCP server，核心接入思路都一样：
+
+1. 在仓库根目录安装依赖
+2. 以 `python -m mcp_server` 启动 server
+3. 把这个命令注册到对应平台的 MCP 配置里
+4. 如果平台不支持 MCP，就直接调用 `skills/coursework-autopilot/scripts/` 下的脚本
 
 ## 验证命令
 
